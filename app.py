@@ -1,34 +1,48 @@
 import streamlit as st
 from newsapi import NewsApiClient
 
-# Streamlit secrets se API key uthayega
+# Layout setup
+st.set_page_config(page_title="Market Intelligence", layout="wide")
+
+# Futuristic Styling (CSS)
+st.markdown("""
+    <style>
+    .main {
+        background-color: #0e1117;
+        color: #00ffcc;
+    }
+    .stApp {
+        background: linear-gradient(to right, #000000, #1a1a2e);
+    }
+    h1 {
+        color: #00ffcc;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 api_key = st.secrets["NEWS_API_KEY"]
 newsapi = NewsApiClient(api_key=api_key)
 
-st.title("Global Market Intelligence 🌍")
+st.title("🚀 Market Evolution Hub")
+st.markdown("### *The future of finance is changing. Stay ahead of the curve.*")
 
-# User se company ka naam mangna
-company_input = st.text_input("Konsi company track karni hai? (e.g., NVIDIA, Tesla, Apple):")
+# Default companies
+default_companies = ["NVIDIA", "Tesla", "Apple"]
 
-# AGAR company name diya hai, toh automatic news dikhaye
-if company_input:
-    st.subheader(f"Latest News for {company_input}")
+for company in default_companies:
+    st.markdown("---")
+    st.subheader(f"🌐 Real-time Insight: {company}")
     
-    # NewsAPI se data fetch karna
-    all_articles = newsapi.get_everything(
-        q=company_input, 
-        language='en', 
-        sort_by='publishedAt', 
-        page_size=5
-    )
+    articles = newsapi.get_everything(q=company, language='en', sort_by='publishedAt', page_size=3)
     
-    if all_articles['totalResults'] > 0:
-        for article in all_articles['articles']:
-            st.write(f"**{article['title']}**")
-            st.write(f"{article['description']}")
-            st.write(f"[Read More]({article['url']})")
-            st.markdown("---")
+    if articles['articles']:
+        cols = st.columns(3)
+        for i, article in enumerate(articles['articles']):
+            with cols[i]:
+                st.write(f"**{article['title']}**")
+                st.write(f"[Read Analysis]({article['url']})")
     else:
-        st.write("Is company ki koi nayi khabar nahi mili.")
-else:
-    st.write("Upar company ka naam type karo, news apne aap load ho jayegi!")
+        st.write("No new signals detected.")
