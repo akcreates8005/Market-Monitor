@@ -1,3 +1,4 @@
 streamlit
 newsapi-python
 textblob
+yfinance
