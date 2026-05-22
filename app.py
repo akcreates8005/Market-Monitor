@@ -5,12 +5,21 @@ from textblob import TextBlob
 # Page Config
 st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 
-# Styling
+# Futuristic Styling with Improved Readability
 st.markdown("""
     <style>
     .stApp { background-color: #050505; }
     h1 { color: #00ffcc !important; text-align: center; }
-    .headline { font-size: 1.2rem !important; font-weight: 700 !important; color: #ffffff !important; }
+    h2, h3 { color: #00ffcc !important; }
+    
+    /* Headlines - Pure White for maximum contrast */
+    .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #ffffff !important; }
+    
+    /* Body text - Brighter gray for readability */
+    div.stMarkdown > div > p { color: #e0e0e0 !important; }
+    
+    /* Expanders */
+    .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -19,7 +28,7 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# SEARCH BAR ADDED HERE
+# Search Bar
 search_query = st.text_input("🔍 Search specific company/sector (e.g., Apple, Tesla, Crypto):", "")
 
 # Logic: Search hoga toh sirf wo dikhega, varna default sectors
@@ -35,7 +44,7 @@ for item in target_list:
         domains='bloomberg.com,reuters.com,cnbc.com,wsj.com',
         language='en',
         sort_by='publishedAt',
-        page_size=10 # Badha kar 10 kar diya hai
+        page_size=10
     )
     
     if articles['articles']:
@@ -51,7 +60,7 @@ for item in target_list:
             # Collapsible Summary Section
             with st.expander("Click to view available details"):
                 st.markdown("### Summary")
-                st.info(article['description'] if article['description'] else "No detailed summary available from this source.")                
+                st.info(article['description'] if article['description'] else "No detailed summary available.")                
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
