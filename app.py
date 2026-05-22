@@ -5,6 +5,18 @@ from textblob import TextBlob
 # Page Config
 st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 
+# Mapping short names to full names for better search results
+ticker_mapping = {
+    "SLV": "iShares Silver Trust",
+    "GLD": "SPDR Gold Shares",
+    "SLVP": "iShares MSCI Global Silver Miners",
+    "GDX": "VanEck Gold Miners ETF",
+    "SIL": "Global X Silver Miners ETF",
+    "JEPQ": "JPMorgan Nasdaq Equity Premium Income",
+    "QQQI": "Neos Nasdaq 100 High Income",
+    "SPYI": "Neos S&P 500 High Income"
+}
+
 # Styling
 st.markdown("""
     <style>
@@ -22,24 +34,27 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Badi Company List
-options = ["", "Technology", "Finance", "Healthcare", "NVIDIA", "Tesla", "Apple", "Netflix", "Microsoft", "Amazon", "Google", "Meta", "AMD", "Intel", "JP Morgan", "Goldman Sachs"]
-selected_item = st.selectbox("🎯 Select a Sector or Company to track:", options)
+# Combined Dropdown: Sectors + Your specific ticker list
+options = ["", "Technology", "Finance", "Healthcare"] + list(ticker_mapping.keys()) + ["NVIDIA", "Tesla", "Apple", "Netflix", "Microsoft", "Amazon"]
+selected_item = st.selectbox("🎯 Select or type a Ticker/Sector:", options)
 
-# Logic: Selection hote hi news load hogi
-target_list = [selected_item] if selected_item else ["Technology", "Finance", "Healthcare"]
+# If selected item is in our mapping, use the full name for the search query
+query_term = ticker_mapping.get(selected_item, selected_item)
+
+# Logic
+target_list = [query_term] if selected_item else ["Technology", "Finance", "Healthcare"]
 
 for item in target_list:
     st.markdown("---")
-    st.subheader(f"🌐 MARKET SIGNALS: {item if item else 'Overview'}")
+    st.subheader(f"🌐 MARKET SIGNALS: {item}")
     
-    # NewsAPI Call
+    # NewsAPI Call using the query_term
     articles = newsapi.get_everything(
-        q=f"{item} AND (stock OR merger OR earnings)",
+        q=f"{item} AND (stock OR market OR fund OR ETF)",
         domains='bloomberg.com,reuters.com,cnbc.com,wsj.com',
         language='en',
         sort_by='publishedAt',
-        page_size=10
+        page_size=8
     )
     
     if articles['articles']:
@@ -56,4 +71,4 @@ for item in target_list:
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
-        st.write("No active signals found.")
+        st.write("No active signals found for this search.")
