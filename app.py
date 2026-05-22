@@ -46,9 +46,10 @@ for sector in target_sectors:
             st.write(f"**Sentiment:** {sentiment}")
             
             # 2. Collapsible Summary Section
-            with st.expander("View 8-10 line summary"):
-                summary = article['description'] or "No summary available."
-                st.write(summary)
+            with st.expander("Click to view available details"):
+                st.markdown("### Summary")
+                st.info(article['description'] if article['description'] else "No detailed summary available from this source.")               
+                st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
         st.write("No active signals.")
