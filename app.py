@@ -19,20 +19,23 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# 1. Predefined sectors/companies for automatic load
-target_sectors = ["Technology", "Finance", "Healthcare"]
+# SEARCH BAR ADDED HERE
+search_query = st.text_input("🔍 Search specific company/sector (e.g., Apple, Tesla, Crypto):", "")
 
-for sector in target_sectors:
+# Logic: Search hoga toh sirf wo dikhega, varna default sectors
+target_list = [search_query] if search_query else ["Technology", "Finance", "Healthcare"]
+
+for item in target_list:
     st.markdown("---")
-    st.subheader(f"🌐 SECTOR TREND: {sector}")
+    st.subheader(f"🌐 MARKET SIGNALS: {item}")
     
-    # Fetch news automatically on load
+    # Fetch news
     articles = newsapi.get_everything(
-        q=f"{sector} AND (stock OR merger OR earnings)",
+        q=f"{item} AND (stock OR merger OR earnings)",
         domains='bloomberg.com,reuters.com,cnbc.com,wsj.com',
         language='en',
         sort_by='publishedAt',
-        page_size=15
+        page_size=10 # Badha kar 10 kar diya hai
     )
     
     if articles['articles']:
@@ -45,11 +48,11 @@ for sector in target_sectors:
             st.markdown(f'<p class="headline">{article["title"]}</p>', unsafe_allow_html=True)
             st.write(f"**Sentiment:** {sentiment}")
             
-            # 2. Collapsible Summary Section
+            # Collapsible Summary Section
             with st.expander("Click to view available details"):
                 st.markdown("### Summary")
-                st.info(article['description'] if article['description'] else "No detailed summary available from this source.")               
+                st.info(article['description'] if article['description'] else "No detailed summary available from this source.")                
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
-        st.write("No active signals.")
+        st.write("No active signals found for this search.")
