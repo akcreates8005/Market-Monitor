@@ -19,23 +19,25 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Search Bar
-search_query = st.text_input("🔍 Enter Ticker (e.g., GLD) or Company Name:", "").strip()
+# Global Search
+search_query = st.text_input("🔍 Search specific ticker or company:", "").strip()
 
-# LOGIC: If search exists, query it. Else, load Top 15 Market News.
+# LOGIC:
+# If user searches, show that news. 
+# If empty, show the "Market Pulse" (Top 20 Hyper-News for Robinhood-favorite stocks)
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
 else:
-    st.subheader("🔥 TOP 15 MARKET UPDATES")
-    # This query captures broad financial market news when nothing is searched
-    query_string = "(stock OR market OR finance OR economy)"
+    st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
+    # This list covers the stocks most common on Robinhood platforms
+    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta OR AMD OR Palantir OR Netflix) AND (stock OR market OR earnings)"
 
-# Fetching news (page_size set to 15)
+# Display 20 articles
 articles = newsapi.get_everything(
     q=query_string,
     language='en',
-    sort_by='publishedAt',
+    sort_by='relevancy', 
     page_size=45
 )
 
@@ -52,4 +54,4 @@ if articles['articles']:
             st.write(f"**Source:** {article['source']['name']}")
             st.write(f"[Read Full Report]({article['url']})")
 else:
-    st.write("No signals found. Try another search.")
+    st.write("No major market signals detected right now.")
