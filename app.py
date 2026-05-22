@@ -36,7 +36,7 @@ articles = newsapi.get_everything(
     q=query_string,
     language='en',
     sort_by='publishedAt',
-    page_size=15
+    page_size=45
 )
 
 if articles['articles']:
