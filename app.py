@@ -32,7 +32,7 @@ for sector in target_sectors:
         domains='bloomberg.com,reuters.com,cnbc.com,wsj.com',
         language='en',
         sort_by='publishedAt',
-        page_size=3
+        page_size=15
     )
     
     if articles['articles']:
