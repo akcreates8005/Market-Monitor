@@ -5,20 +5,14 @@ from textblob import TextBlob
 # Page Config
 st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 
-# Futuristic Styling with Improved Readability
+# Styling
 st.markdown("""
     <style>
     .stApp { background-color: #050505; }
     h1 { color: #00ffcc !important; text-align: center; }
     h2, h3 { color: #00ffcc !important; }
-    
-    /* Headlines - Pure White for maximum contrast */
     .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #ffffff !important; }
-    
-    /* Body text - Brighter gray for readability */
     div.stMarkdown > div > p { color: #e0e0e0 !important; }
-    
-    /* Expanders */
     .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
@@ -28,17 +22,17 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Search Bar
-search_query = st.text_input("🔍 Search specific company/sector (e.g., Apple, Tesla, Crypto):", "")
+# DROPDOWN (Selectbox) - No need to type everything, just select and it loads!
+options = ["", "Technology", "Finance", "Healthcare", "NVIDIA", "Tesla", "Apple", "Netflix", "Microsoft", "Amazon"]
+selected_item = st.selectbox("🎯 Select a Sector or Company to track:", options)
 
-# Logic: Search hoga toh sirf wo dikhega, varna default sectors
-target_list = [search_query] if search_query else ["Technology", "Finance", "Healthcare"]
+# Logic: Selection hote hi news load hogi
+target_list = [selected_item] if selected_item else ["Technology", "Finance", "Healthcare"]
 
 for item in target_list:
     st.markdown("---")
-    st.subheader(f"🌐 MARKET SIGNALS: {item}")
+    st.subheader(f"🌐 MARKET SIGNALS: {item if item else 'Overview'}")
     
-    # Fetch news
     articles = newsapi.get_everything(
         q=f"{item} AND (stock OR merger OR earnings)",
         domains='bloomberg.com,reuters.com,cnbc.com,wsj.com',
@@ -49,19 +43,16 @@ for item in target_list:
     
     if articles['articles']:
         for article in articles['articles']:
-            # Sentiment
             analysis = TextBlob(article['title'] + " " + (article['description'] or ""))
             sentiment = "🟢 Positive" if analysis.sentiment.polarity > 0.1 else "🔴 Negative" if analysis.sentiment.polarity < -0.1 else "⚪ Neutral"
             
-            # Display headline
             st.markdown(f'<p class="headline">{article["title"]}</p>', unsafe_allow_html=True)
             st.write(f"**Sentiment:** {sentiment}")
             
-            # Collapsible Summary Section
             with st.expander("Click to view available details"):
                 st.markdown("### Summary")
                 st.info(article['description'] if article['description'] else "No detailed summary available.")                
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
-        st.write("No active signals found for this search.")
+        st.write("No active signals found.")
