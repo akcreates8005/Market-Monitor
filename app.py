@@ -31,9 +31,9 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Company Mapping for Dropdown
+# Company Mapping
 company_map = {
-    "Select a company...": "",
+    "Select or Type below...": "",
     "NVIDIA (NVDA)": "Nvidia",
     "Tesla (TSLA)": "Tesla",
     "Apple (AAPL)": "Apple",
@@ -47,14 +47,20 @@ company_map = {
     "Netflix (NFLX)": "Netflix",
     "JPMorgan (JPM)": "JPMorgan",
     "Morgan Stanley (MS)": "Morgan Stanley",
-    "Kinder Morgan (KMI)": "Kinder Morgan"
+    "Kinder Morgan (KMI)": "Kinder Morgan",
+    "American Express (AXP)": "American Express"
 }
 
-# Dropdown Menu
-selected_label = st.selectbox("🎯 Search specific ticker or company:", list(company_map.keys()))
-search_query = company_map[selected_label]
+# 1. Dropdown for easy selection
+selected_label = st.selectbox("🎯 Select a company:", list(company_map.keys()))
+
+# 2. Search box for custom typing (agar list mein nahi hai)
+manual_query = st.text_input("🔍 Or manually type any company/ticker:", "").strip()
 
 # LOGIC:
+# Manual search ko priority denge, agar woh khali hai toh dropdown se uthayenge
+search_query = manual_query if manual_query else company_map[selected_label]
+
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
