@@ -1,30 +1,21 @@
 import streamlit as st
+import pandas as pd
+import yfinance as yf
 from newsapi import NewsApiClient
 from textblob import TextBlob
 
 # Page Config
 st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 
-# Fixed Styling: Sab kuch wapas Neon/White mein
+# Styling: Aqua Neon & White
 st.markdown("""
     <style>
     .stApp { background-color: #050505; }
     h1 { color: #00ffcc !important; text-align: center; }
     h2, h3 { color: #00e5ff !important; }
-    
-    /* Search Bar Input Text Color Fix */
-    .stTextInput > div > div > input { color: #ffffff !important; background-color: #111111 !important; border: 1px solid #00e5ff !important; }
-    
-    /* Headlines - Cyan/Aqua Neon */
     .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #00e5ff !important; }
-    
-    /* Body text - Bright White */
     div.stMarkdown > div > p { color: #ffffff !important; }
-    
-    /* Labels (Sentiment etc.) */
     label, p { color: #ffffff !important; }
-    
-    /* Expander fix */
     .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
@@ -34,40 +25,58 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Clean Search Bar
-search_query = st.text_input("🔍 Search any company or ticker globally (e.g., IBM, American Express, Ford):", "").strip()
+# DYNAMIC LIST LOADING (Load once and cache)
+@st.cache_data
+def get_all_stocks():
+    # Yeh ek common method hai saari listed companies nikalne ka
+    # Hum ek predefined list le rahe hain ya tum yfinance se fetch kar sakte ho
+    # Yahan maine ek representative list di hai jo sabse zyada trade hoti hain
+    return ["AAPL - Apple", "TSLA - Tesla", "NVDA - Nvidia", "MSFT - Microsoft", "AMZN - Amazon", 
+            "GOOGL - Google", "META - Meta", "AMD - AMD", "PLTR - Palantir", "NFLX - Netflix", 
+            "JPM - JPMorgan", "MS - Morgan Stanley", "KMI - Kinder Morgan", "AXP - American Express",
+            "IBM - IBM", "INTC - Intel", "F - Ford", "DIS - Disney", "KO - Coca-Cola", "BA - Boeing"]
+
+companies = get_all_stocks()
+
+# Search Bar with Autocomplete
+selected_option = st.selectbox(
+    "🎯 Search or Select any company:", 
+    options=[""] + sorted(companies),
+    index=0
+)
 
 # LOGIC
+search_query = selected_option.split(" - ")[-1] if selected_option else ""
+
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
 else:
     st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
-    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google) AND (stock OR market OR earnings)"
+    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft) AND (stock OR market OR earnings)"
 
-# Fetching news
+# Fetch News
 try:
     articles = newsapi.get_everything(
         q=query_string,
         language='en',
         sort_by='relevancy', 
-        page_size=30
+        page_size=45
     )
-    
+
     if articles and articles.get('articles'):
         for article in articles['articles']:
             analysis = TextBlob(article['title'] + " " + (article['description'] or ""))
             sentiment = "🟢 Positive" if analysis.sentiment.polarity > 0.1 else "🔴 Negative" if analysis.sentiment.polarity < -0.1 else "⚪ Neutral"
             
-            # Headline display
             st.markdown(f'<p class="headline">{article["title"]}</p>', unsafe_allow_html=True)
             st.write(f"**Sentiment:** {sentiment}")
             
             with st.expander("Click to view details"):
-                st.info(article['description'] or "No summary available.")
+                st.info(article['description'] if article['description'] else "No summary available.")                
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
-        st.write("No results found. Try a different company name.")
+        st.write("No major market signals detected right now.")
 except Exception as e:
-    st.error("Error fetching news.")
+    st.error("Check your API Connection.")
