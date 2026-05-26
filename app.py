@@ -31,8 +31,28 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Global Search
-search_query = st.text_input("🔍 Search specific ticker or company:", "").strip()
+# Company Mapping for Dropdown
+company_map = {
+    "Select a company...": "",
+    "NVIDIA (NVDA)": "Nvidia",
+    "Tesla (TSLA)": "Tesla",
+    "Apple (AAPL)": "Apple",
+    "SpaceX": "SpaceX",
+    "Amazon (AMZN)": "Amazon",
+    "Microsoft (MSFT)": "Microsoft",
+    "Google (GOOGL)": "Google",
+    "Meta (META)": "Meta",
+    "AMD (AMD)": "AMD",
+    "Palantir (PLTR)": "Palantir",
+    "Netflix (NFLX)": "Netflix",
+    "JPMorgan (JPM)": "JPMorgan",
+    "Morgan Stanley (MS)": "Morgan Stanley",
+    "Kinder Morgan (KMI)": "Kinder Morgan"
+}
+
+# Dropdown Menu
+selected_label = st.selectbox("🎯 Search specific ticker or company:", list(company_map.keys()))
+search_query = company_map[selected_label]
 
 # LOGIC:
 if search_query:
@@ -40,10 +60,9 @@ if search_query:
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
 else:
     st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
-    # Robinhood-favorite stocks list
     query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta OR AMD OR Palantir OR Netflix) AND (stock OR market OR earnings)"
 
-# Display 45 articles (as per your request)
+# Display 45 articles
 articles = newsapi.get_everything(
     q=query_string,
     language='en',
