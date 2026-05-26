@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import yfinance as yf
 from newsapi import NewsApiClient
 from textblob import TextBlob
 
@@ -13,49 +12,62 @@ st.markdown("""
     .stApp { background-color: #050505; }
     h1 { color: #00ffcc !important; text-align: center; }
     h2, h3 { color: #00e5ff !important; }
+    
+    /* Search Bar Input Color */
+    .stSelectbox > div > div { color: #ffffff !important; background-color: #111111 !important; border: 1px solid #00e5ff !important; }
+    
+    /* Headlines - Cyan/Aqua Neon */
     .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #00e5ff !important; }
+    
+    /* Body text - Bright White */
     div.stMarkdown > div > p { color: #ffffff !important; }
+    
+    /* Labels */
     label, p { color: #ffffff !important; }
+    
+    /* Expander */
     .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
+# API Setup
 api_key = st.secrets["NEWS_API_KEY"]
 newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# DYNAMIC LIST LOADING (Load once and cache)
+# DYNAMIC TICKER LIST: Yeh link market ki latest companies fetch karegi
 @st.cache_data
-def get_all_stocks():
-    # Yeh ek common method hai saari listed companies nikalne ka
-    # Hum ek predefined list le rahe hain ya tum yfinance se fetch kar sakte ho
-    # Yahan maine ek representative list di hai jo sabse zyada trade hoti hain
-    return ["AAPL - Apple", "TSLA - Tesla", "NVDA - Nvidia", "MSFT - Microsoft", "AMZN - Amazon", 
-            "GOOGL - Google", "META - Meta", "AMD - AMD", "PLTR - Palantir", "NFLX - Netflix", 
-            "JPM - JPMorgan", "MS - Morgan Stanley", "KMI - Kinder Morgan", "AXP - American Express",
-            "IBM - IBM", "INTC - Intel", "F - Ford", "DIS - Disney", "KO - Coca-Cola", "BA - Boeing"]
+def get_market_tickers():
+    url = "https://raw.githubusercontent.com/rreichel3/US-Stock-Symbols/main/nasdaq/nasdaq_full.csv"
+    try:
+        df = pd.read_csv(url)
+        # Ticker aur Name ko combine karke list banayein
+        return (df['Symbol'] + " - " + df['Name']).tolist()
+    except:
+        # Agar net issue ho toh fallback
+        return ["AAPL - Apple", "TSLA - Tesla", "NVDA - Nvidia", "MSFT - Microsoft", "AMZN - Amazon"]
 
-companies = get_all_stocks()
+all_stocks = get_market_tickers()
 
-# Search Bar with Autocomplete
-selected_option = st.selectbox(
-    "🎯 Search or Select any company:", 
-    options=[""] + sorted(companies),
+# SEARCH BAR
+selected = st.selectbox(
+    "🎯 Search or Select any company (Type to search thousands):", 
+    options=[""] + all_stocks,
     index=0
 )
 
 # LOGIC
-search_query = selected_option.split(" - ")[-1] if selected_option else ""
+search_query = selected.split(" - ")[-1] if selected else ""
 
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
 else:
     st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
-    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft) AND (stock OR market OR earnings)"
+    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon) AND (stock OR market OR earnings)"
 
-# Fetch News
+# NEWS FETCHING
 try:
     articles = newsapi.get_everything(
         q=query_string,
@@ -77,6 +89,6 @@ try:
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
-        st.write("No major market signals detected right now.")
+        st.write("No major market signals detected.")
 except Exception as e:
-    st.error("Check your API Connection.")
+    st.error("Error fetching news. Please check your API configuration.")
