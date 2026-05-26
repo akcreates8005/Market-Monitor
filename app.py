@@ -37,11 +37,11 @@ search_query = st.text_input("🎯 Enter Company Name or Ticker (e.g., GLD, Nvid
 # LOGIC
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
-    # NewsAPI ka engine khud search karega, list ki limit khatam
-    query_string = f"{search_query} stock market"
+    # Yeh logic ensure karta hai ki agar exact naam nahi mila, toh stock/market keyword se dhund le
+    query_string = f'("{search_query}") OR ("{search_query} stock") OR ("{search_query} market")'
 else:
-    st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
-    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon) AND (stock OR market)"
+    st.subheader("🔥 MARKET PULSE: Top 25 Hyper-News")
+    query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta) AND (stock OR market OR earnings)"
 
 # NEWS FETCHING
 try:
