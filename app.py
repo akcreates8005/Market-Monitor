@@ -10,25 +10,30 @@ st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 st.markdown("""
     <style>
     .stApp { background-color: #050505; }
-    h1 { color: #00ffcc !important; text-align: center; }
-    h2, h3 { color: #00e5ff !important; }
     
-    /* Dropdown/Selectbox Text Fix */
+    /* Search Box: White Background, Black Text */
     div[data-baseweb="select"] > div {
-        color: #ffffff !important;
-        background-color: #111111 !important;
+        background-color: #ffffff !important; 
+        color: #000000 !important; 
         border: 1px solid #00e5ff !important;
     }
     
-    /* Dropdown Items List Fix */
+    /* Dropdown List Items: White Background, Black Text */
     div[role="listbox"] div {
-        color: #ffffff !important;
-        background-color: #1a1a1a !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
     
+    /* Placeholder text visibility */
+    div[data-baseweb="select"] span {
+        color: #555555 !important;
+    }
+
+    h1 { color: #00ffcc !important; text-align: center; }
+    h2, h3 { color: #00e5ff !important; }
     .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #00e5ff !important; }
     div.stMarkdown > div > p { color: #ffffff !important; }
-    label, p { color: #ffffff !important; }
+    label { color: #ffffff !important; }
     .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
