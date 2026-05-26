@@ -47,17 +47,13 @@ else:
 try:
     articles = newsapi.get_everything(q=query_string, language='en', sort_by='relevancy', page_size=30)
     
-  if articles and articles.get('articles'):
+    if articles and articles.get('articles'):
         for article in articles['articles']:
-            # Headline display
             st.markdown(f'<p class="headline">{article["title"]}</p>', unsafe_allow_html=True)
             
             with st.expander("Click to view details"):
-                # Naya "Smart" summary logic
                 summary = article.get('description') or article.get('content') or "Click the link below for more details."
                 st.info(summary)
-                
-                # Source aur link ab expander ke andar hain (Sahi alignment)
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
