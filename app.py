@@ -40,7 +40,7 @@ if search_query:
     # Yeh logic ensure karta hai ki agar exact naam nahi mila, toh stock/market keyword se dhund le
     query_string = f'("{search_query}") OR ("{search_query} stock") OR ("{search_query} market")'
 else:
-    st.subheader("🔥 MARKET PULSE: Top 25 Hyper-News")
+    st.subheader("🔥 MARKET PULSE: Top 30 Hyper-News")
     query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta) AND (stock OR market OR earnings)"
 
 # NEWS FETCHING
