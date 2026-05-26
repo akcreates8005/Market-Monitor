@@ -31,35 +31,27 @@ newsapi = NewsApiClient(api_key=api_key)
 
 st.title("🚀 MARKET EVOLUTION HUB")
 
-# Company Mapping
-company_map = {
-    "Select or Type below...": "",
-    "NVIDIA (NVDA)": "Nvidia",
-    "Tesla (TSLA)": "Tesla",
-    "Apple (AAPL)": "Apple",
-    "SpaceX": "SpaceX",
-    "Amazon (AMZN)": "Amazon",
-    "Microsoft (MSFT)": "Microsoft",
-    "Google (GOOGL)": "Google",
-    "Meta (META)": "Meta",
-    "AMD (AMD)": "AMD",
-    "Palantir (PLTR)": "Palantir",
-    "Netflix (NFLX)": "Netflix",
-    "JPMorgan (JPM)": "JPMorgan",
-    "Morgan Stanley (MS)": "Morgan Stanley",
-    "Kinder Morgan (KMI)": "Kinder Morgan",
-    "American Express (AXP)": "American Express"
-}
+# COMPANY LIST (Jo tumne mangi thi)
+# Tum is list mein kitne bhi naam add kar sakte ho
+companies = [
+    "Nvidia (NVDA)", "Tesla (TSLA)", "Apple (AAPL)", "SpaceX", "Amazon (AMZN)", 
+    "Microsoft (MSFT)", "Google (GOOGL)", "Meta (META)", "AMD (AMD)", 
+    "Palantir (PLTR)", "Netflix (NFLX)", "JPMorgan (JPM)", "Morgan Stanley (MS)", 
+    "Kinder Morgan (KMI)", "American Express (AXP)"
+]
 
-# 1. Dropdown for easy selection
-selected_label = st.selectbox("🎯 Select a company:", list(company_map.keys()))
-
-# 2. Search box for custom typing (agar list mein nahi hai)
-manual_query = st.text_input("🔍 Or manually type any company/ticker:", "").strip()
+# INTEGRATED SEARCH: Dropdown aur manual type dono ek hi box mein
+search_input = st.selectbox(
+    "🎯 Search or Select a company:", 
+    options=[""] + companies,
+    index=0,
+    placeholder="Type or select a company..."
+)
 
 # LOGIC:
-# Manual search ko priority denge, agar woh khali hai toh dropdown se uthayenge
-search_query = manual_query if manual_query else company_map[selected_label]
+# Agar user type karta hai toh manual input, nahi toh dropdown
+# Streamlit mein selectbox mein typing enabled hoti hai
+search_query = search_input.split(" (")[0] if search_input else ""
 
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
