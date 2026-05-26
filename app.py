@@ -51,7 +51,12 @@ try:
         for article in articles['articles']:
             st.markdown(f'<p class="headline">{article["title"]}</p>', unsafe_allow_html=True)
             with st.expander("Click to view details"):
-                st.info(article['description'] or "No summary available.")
+                # Purana code:
+# st.info(article['description'] if article['description'] else "No summary available.")
+
+# Naya "Smart" code:
+summary = article.get('description') or article.get('content') or "Click the link below for more details."
+st.info(summary)
                 st.write(f"**Source:** {article['source']['name']}")
                 st.write(f"[Read Full Report]({article['url']})")
     else:
