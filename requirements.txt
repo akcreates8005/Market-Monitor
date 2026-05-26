@@ -2,3 +2,5 @@ streamlit
 newsapi-python
 textblob
 yfinance
+thefuzz
+python-Levenshtein
