@@ -2,15 +2,27 @@ import streamlit as st
 from newsapi import NewsApiClient
 from textblob import TextBlob
 
+# Page Config
 st.set_page_config(page_title="Market Evolution Hub", layout="wide")
 
-# Styling
+# Styling: Aqua Neon Headlines & Bright White Text
 st.markdown("""
     <style>
     .stApp { background-color: #050505; }
     h1 { color: #00ffcc !important; text-align: center; }
-    .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #ffffff !important; }
-    div.stMarkdown > div > p { color: #e0e0e0 !important; }
+    h2, h3 { color: #00e5ff !important; }
+    
+    /* Headlines - Cyan/Aqua Neon */
+    .headline { font-size: 1.3rem !important; font-weight: 800 !important; color: #00e5ff !important; }
+    
+    /* Body text - Bright White */
+    div.stMarkdown > div > p { color: #ffffff !important; }
+    
+    /* Labels (Sentiment etc.) */
+    label, p { color: #ffffff !important; }
+    
+    /* Expander */
+    .streamlit-expanderHeader { color: #00ffcc !important; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -23,17 +35,15 @@ st.title("🚀 MARKET EVOLUTION HUB")
 search_query = st.text_input("🔍 Search specific ticker or company:", "").strip()
 
 # LOGIC:
-# If user searches, show that news. 
-# If empty, show the "Market Pulse" (Top 20 Hyper-News for Robinhood-favorite stocks)
 if search_query:
     st.subheader(f"🌐 SEARCH RESULTS: {search_query.upper()}")
     query_string = f"({search_query}) AND (stock OR market OR earnings)"
 else:
     st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
-    # This list covers the stocks most common on Robinhood platforms
+    # Robinhood-favorite stocks list
     query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta OR AMD OR Palantir OR Netflix) AND (stock OR market OR earnings)"
 
-# Display 20 articles
+# Display 45 articles (as per your request)
 articles = newsapi.get_everything(
     q=query_string,
     language='en',
