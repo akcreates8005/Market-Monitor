@@ -40,12 +40,12 @@ if search_query:
     # Yeh logic ensure karta hai ki agar exact naam nahi mila, toh stock/market keyword se dhund le
     query_string = f'("{search_query}") OR ("{search_query} stock") OR ("{search_query} market")'
 else:
-    st.subheader("🔥 MARKET PULSE: Top 30 Hyper-News")
+    st.subheader("🔥 MARKET PULSE: Top 20 Hyper-News")
     query_string = "(Nvidia OR Tesla OR Apple OR SpaceX OR Amazon OR Microsoft OR Google OR Meta) AND (stock OR market OR earnings)"
 
 # NEWS FETCHING
 try:
-    articles = newsapi.get_everything(q=query_string, language='en', sort_by='relevancy', page_size=30)
+    articles = newsapi.get_everything(q=query_string, language='en', sort_by='relevancy', page_size=20)
     
     if articles and articles.get('articles'):
         for article in articles['articles']:
